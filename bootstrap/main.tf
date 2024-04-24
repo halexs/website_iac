@@ -1,4 +1,3 @@
-
 terraform {
   backend "local" {
     path = "./terraform.state"
@@ -18,7 +17,7 @@ provider "aws" {
 }
 
 resource "aws_s3_bucket" "state" {
-  bucket = "kaelnomad-terraform-state"
+  bucket = "kaelnomads-terraform-state"
 
   tags = {
     Name        = "State Bucket"

@@ -1,7 +1,7 @@
 {
   "version": 4,
   "terraform_version": "1.8.1",
-  "serial": 1,
+  "serial": 8,
   "lineage": "a570e417-2e91-7ed8-980c-6cd41c12d71b",
   "outputs": {},
   "resources": [
@@ -16,11 +16,11 @@
           "attributes": {
             "acceleration_status": "",
             "acl": null,
-            "arn": "arn:aws:s3:::kaelnomad-terraform-state",
-            "bucket": "kaelnomad-terraform-state",
-            "bucket_domain_name": "kaelnomad-terraform-state.s3.amazonaws.com",
+            "arn": "arn:aws:s3:::kaelnomads-terraform-state",
+            "bucket": "kaelnomads-terraform-state",
+            "bucket_domain_name": "kaelnomads-terraform-state.s3.amazonaws.com",
             "bucket_prefix": "",
-            "bucket_regional_domain_name": "kaelnomad-terraform-state.s3.us-east-1.amazonaws.com",
+            "bucket_regional_domain_name": "kaelnomads-terraform-state.s3.us-east-1.amazonaws.com",
             "cors_rule": [],
             "force_destroy": true,
             "grant": [
@@ -34,7 +34,7 @@
               }
             ],
             "hosted_zone_id": "Z3AQBSTGFYJSTF",
-            "id": "kaelnomad-terraform-state",
+            "id": "kaelnomads-terraform-state",
             "lifecycle_rule": [],
             "logging": [],
             "object_lock_configuration": [],
