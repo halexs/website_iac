@@ -4,7 +4,7 @@ resource "aws_codepipeline" "main" {
   pipeline_type = "V2" #V1 is normal, try V2 to save on costs, based only on run-time.
 
   artifact_store {
-    location = aws_s3_bucket.main.bucket
+    location = aws_s3_bucket.artifacts.bucket
     type     = "S3"
 
     # encryption_key {
@@ -79,7 +79,7 @@ resource "aws_codepipeline" "main" {
   }
 }
 
-resource "aws_s3_bucket" "main" {
+resource "aws_s3_bucket" "artifacts" {
   bucket        = "kaelnomads-artifact-bucket"
   force_destroy = true
 }
