@@ -1,6 +1,7 @@
 resource "aws_codepipeline" "main" {
-  name     = "kaelnomads-frontend"
-  role_arn = aws_iam_role.codepipeline.arn
+  name          = "kaelnomads-frontend"
+  role_arn      = aws_iam_role.codepipeline.arn
+  pipeline_type = "V2" #V1 is normal, try V2 to save on costs, based only on run-time.
 
   artifact_store {
     location = aws_s3_bucket.main.bucket
