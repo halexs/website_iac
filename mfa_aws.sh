@@ -8,6 +8,7 @@ aws_profile=$2
 if [ -z "${mfa_code}" ]
 then
     echo "mfa_code not specified, please input 6 digit code"
+    # read -p "Enter 6 digit mfa code: " mfa_code
     exit 0
 fi
 
@@ -24,6 +25,12 @@ temporary_credentials="$(aws sts get-session-token --serial-number $mfa_serial -
 access_key_id=$(echo "$temporary_credentials" | grep "AccessKeyId" | sed -n 's/.*"AccessKeyId": "\([^"]*\).*/\1/p')
 secret_access_key=$(echo "$temporary_credentials" | grep "SecretAccessKey" | sed -n 's/.*"SecretAccessKey": "\([^"]*\).*/\1/p')
 access_token=$(echo "$temporary_credentials" | grep "SessionToken" | sed -n 's/.*"SessionToken": "\([^"]*\).*/\1/p')
+
+echo "AWS_ACCESS_KEY_ID=$access_key_id" > .env
+echo "AWS_SECRET_ACCESS_KEY=$secret_access_key" >> .env
+echo "AWS_SESSION_TOKEN=$access_token" >> .env
+
+# source .env
 
 export AWS_ACCESS_KEY_ID=$access_key_id
 export AWS_SECRET_ACCESS_KEY=$secret_access_key
