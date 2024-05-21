@@ -6,11 +6,6 @@ resource "aws_codepipeline" "main" {
   artifact_store {
     location = aws_s3_bucket.artifacts.bucket
     type     = "S3"
-
-    # encryption_key {
-    #   id   = data.aws_kms_alias.s3kmskey.arn
-    #   type = "KMS"
-    # }
   }
 
   stage {
@@ -20,16 +15,22 @@ resource "aws_codepipeline" "main" {
       name             = "Source"
       category         = "Source"
       owner            = "AWS"
-      provider         = "CodeCommit"
+      provider         = "CodeStarSourceConnection"
       version          = "1"
       output_artifacts = ["SourceArtifact"]
 
       configuration = {
-        RepositoryName       = aws_codecommit_repository.main.repository_name
+        # Just do this manually and grab the codestar connection.
+        ConnectionArn        = "arn:aws:codestar-connections:us-east-1:043038001148:connection/f2270e1c-8be3-42b0-900c-4a90db07d02c"
+        FullRepositoryId     = "halexs/kaelnomads-js"
         BranchName           = "main"
-        PollForSourceChanges = false
-        # Could potentially have multiple pipelines
+        OutputArtifactFormat = "CODE_ZIP"
+        DetectChanges        = "true"
       }
+
+      namespace = "SourceVariables"
+      region    = "us-east-1"
+      run_order = 1
     }
   }
 
@@ -84,7 +85,70 @@ resource "aws_s3_bucket" "artifacts" {
   force_destroy = true
 }
 
-resource "aws_codecommit_repository" "main" {
-  repository_name = "kaelnomads-js"
-  description     = "Code that runs the pipeline when pushed"
+# Import existing pipeline configurations
+
+
+resource "aws_codepipeline" "import" {
+  name          = "npm-deploy-code"
+  role_arn      = "arn:aws:iam::043038001148:role/service-role/AWSCodePipelineServiceRole-us-east-1-npm-deploy-code"
+  pipeline_type = "V1"
+
+
+  artifact_store {
+    location = "codepipeline-us-east-1-514535981285"
+    type     = "S3"
+  }
+
+  stage {
+    name = "Source"
+
+    action {
+      name             = "Source"
+      category         = "Source"
+      owner            = "AWS"
+      provider         = "CodeCommit"
+      version          = "1"
+      output_artifacts = ["SourceArtifact"]
+
+      configuration = {
+        PollForSourceChanges = "false"
+        RepositoryName       = "kaelnomads-frontend"
+        BranchName           = "main"
+        OutputArtifactFormat = "CODE_ZIP"
+      }
+
+      namespace = "SourceVariables"
+      region    = "us-east-1"
+      run_order = 1
+    }
+  }
+
+  stage {
+    name = "Build"
+
+    action {
+      name     = "manual-trigger"
+      category = "Approval"
+      owner    = "AWS"
+      provider = "Manual"
+      version  = "1"
+    }
+
+    action {
+      name            = "Build"
+      category        = "Build"
+      owner           = "AWS"
+      provider        = "CodeBuild"
+      input_artifacts = ["SourceArtifact"]
+      version         = "1"
+
+      configuration = {
+        ProjectName = "kaelnomads-codebuild"
+      }
+      namespace = "BuildVariables"
+      output_artifacts = [
+        "BuildArtifact"
+      ]
+    }
+  }
 }
