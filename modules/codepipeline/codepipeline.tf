@@ -6,11 +6,6 @@ resource "aws_codepipeline" "main" {
   artifact_store {
     location = aws_s3_bucket.artifacts.bucket
     type     = "S3"
-
-    # encryption_key {
-    #   id   = data.aws_kms_alias.s3kmskey.arn
-    #   type = "KMS"
-    # }
   }
 
   stage {
@@ -20,16 +15,22 @@ resource "aws_codepipeline" "main" {
       name             = "Source"
       category         = "Source"
       owner            = "AWS"
-      provider         = "CodeCommit"
+      provider         = "CodeStarSourceConnection"
       version          = "1"
       output_artifacts = ["SourceArtifact"]
 
       configuration = {
-        RepositoryName       = aws_codecommit_repository.main.repository_name
+        # Just do this manually and grab the codestar connection arn.
+        ConnectionArn        = "arn:aws:codestar-connections:us-east-1:043038001148:connection/f2270e1c-8be3-42b0-900c-4a90db07d02c"
+        FullRepositoryId     = "halexs/kaelnomads-js"
         BranchName           = "main"
-        PollForSourceChanges = false
-        # Could potentially have multiple pipelines
+        OutputArtifactFormat = "CODE_ZIP"
+        DetectChanges        = "true"
       }
+
+      namespace = "SourceVariables"
+      region    = "us-east-1"
+      run_order = 1
     }
   }
 
@@ -50,6 +51,10 @@ resource "aws_codepipeline" "main" {
       }
     }
 
+  }
+
+  stage {
+    name = "ManualProdApproval"
     action {
       name     = "Approval"
       category = "Approval"
@@ -82,9 +87,4 @@ resource "aws_codepipeline" "main" {
 resource "aws_s3_bucket" "artifacts" {
   bucket        = "kaelnomads-artifact-bucket"
   force_destroy = true
-}
-
-resource "aws_codecommit_repository" "main" {
-  repository_name = "kaelnomads-js"
-  description     = "Code that runs the pipeline when pushed"
 }
