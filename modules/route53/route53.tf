@@ -43,9 +43,21 @@ resource "aws_route53_record" "s3_website" {
   type    = "A"
 
   alias {
-    name                   = "kaelnomads.com."
+    name                   = aws_route53_record.cloudfront.name
     zone_id                = aws_route53_zone.main.zone_id
     evaluate_target_health = false
   }
 }
 
+# Dev
+resource "aws_route53_record" "cloudfront-dev" {
+  zone_id = aws_route53_zone.main.zone_id
+  name    = "dev.kaelnomads.com"
+  type    = "A"
+
+  alias {
+    name                   = var.cloudfront_dev.domain_name
+    zone_id                = var.cloudfront_dev.hosted_zone_id
+    evaluate_target_health = false
+  }
+}
