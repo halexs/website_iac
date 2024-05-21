@@ -17,7 +17,7 @@ locals {
   s3_origin_id = "kaelnomads.com.s3.us-east-1.amazonaws.com"
 }
 
-resource "aws_cloudfront_distribution" "s3_distribution" {
+resource "aws_cloudfront_distribution" "s3_website" {
   origin {
     domain_name = "kaelnomads.com.s3-website-us-east-1.amazonaws.com"
 

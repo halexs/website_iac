@@ -6,7 +6,7 @@ resource "aws_route53_zone" "main" {
 # NS, SOA
 
 # To import:
-#  - cloudfront, cert, www.kaelnomads.com
+#  - (done) cloudfront, (done) cert, www.kaelnomads.com
 
 resource "aws_route53_record" "cloudfront" {
   zone_id = aws_route53_zone.main.zone_id
@@ -14,8 +14,8 @@ resource "aws_route53_record" "cloudfront" {
   type    = "A"
 
   alias {
-    name                   = "df4covshu620a.cloudfront.net." # variabilize
-    zone_id                = "Z2FDTNDATAQYW2"                # variabilize
+    name                   = var.cloudfront.domain_name
+    zone_id                = var.cloudfront.hosted_zone_id
     evaluate_target_health = false
   }
 }
@@ -47,6 +47,5 @@ resource "aws_route53_record" "s3_website" {
     zone_id                = aws_route53_zone.main.zone_id
     evaluate_target_health = false
   }
-
 }
 
