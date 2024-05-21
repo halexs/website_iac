@@ -20,7 +20,7 @@ resource "aws_codepipeline" "main" {
       output_artifacts = ["SourceArtifact"]
 
       configuration = {
-        # Just do this manually and grab the codestar connection.
+        # Just do this manually and grab the codestar connection arn.
         ConnectionArn        = "arn:aws:codestar-connections:us-east-1:043038001148:connection/f2270e1c-8be3-42b0-900c-4a90db07d02c"
         FullRepositoryId     = "halexs/kaelnomads-js"
         BranchName           = "main"
@@ -51,6 +51,10 @@ resource "aws_codepipeline" "main" {
       }
     }
 
+  }
+
+  stage {
+    name = "ManualProdApproval"
     action {
       name     = "Approval"
       category = "Approval"

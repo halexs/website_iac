@@ -10,10 +10,15 @@ resource "aws_codebuild_project" "dev" {
   }
 
   environment {
-    compute_type = "BUILD_GENERAL1_SMALL"
-    image        = "node:21" # "aws/codebuild/amazonlinux2-x86_64-standard:4.0"
-    type         = "LINUX_CONTAINER"
-    # image_pull_credentials_type = "CODEBUILD"
+    compute_type                = "BUILD_GENERAL1_SMALL"
+    image                       = "aws/codebuild/amazonlinux2-x86_64-standard:4.0"
+    type                        = "LINUX_CONTAINER"
+    image_pull_credentials_type = "CODEBUILD"
+
+    environment_variable {
+      name  = "S3_BUCKET_NAME"
+      value = var.s3_website["dev"].bucket
+    }
   }
 
   source {
@@ -35,9 +40,13 @@ resource "aws_codebuild_project" "prod" {
 
   environment {
     compute_type = "BUILD_GENERAL1_SMALL"
-    image        = "node:21" # "aws/codebuild/amazonlinux2-x86_64-standard:4.0"
+    image        = "aws/codebuild/amazonlinux2-x86_64-standard:4.0"
     type         = "LINUX_CONTAINER"
-    # image_pull_credentials_type = "CODEBUILD"
+
+    environment_variable {
+      name  = "S3_BUCKET_NAME"
+      value = var.s3_website["main"].bucket
+    }
   }
 
   source {
