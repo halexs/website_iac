@@ -2,7 +2,7 @@
 resource "aws_codebuild_project" "dev" {
   name          = "codebuild-dev-deployment"
   description   = "Codebuild created using Terraform IaC. Will deploy and run the dev branch, and then the prod branch behind a Manual Approval"
-  build_timeout = 5 # minutes
+  build_timeout = 30 # minutes
   service_role  = aws_iam_role.codebuild.arn
 
   artifacts {
@@ -31,7 +31,7 @@ resource "aws_codebuild_project" "dev" {
 resource "aws_codebuild_project" "prod" {
   name          = "codebuild-prod-deployment"
   description   = "Codebuild created using Terraform IaC. Will deploy and run the dev branch, and then the prod branch behind a Manual Approval"
-  build_timeout = 5 # minutes
+  build_timeout = 30 # minutes
   service_role  = aws_iam_role.codebuild.arn
 
   artifacts {
