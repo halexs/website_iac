@@ -22,6 +22,7 @@ variable "codebuild_policies" {
     "arn:aws:iam::aws:policy/AWSCodeCommitFullAccess",
     "arn:aws:iam::aws:policy/AmazonS3FullAccess",
     "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess",
+    "arn:aws:iam::aws:policy/CloudFrontFullAccess",
   ]
 }
 
