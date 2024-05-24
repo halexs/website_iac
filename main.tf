@@ -20,3 +20,7 @@ module "website_s3" {
 module "website_backend" {
   source = "./modules/website_backend"
 }
+
+output "api_gw_url" {
+  value = module.website_backend
+}
