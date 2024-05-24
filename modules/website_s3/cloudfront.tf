@@ -12,11 +12,6 @@ resource "aws_acm_certificate" "main" {
   }
 }
 
-# locals {
-#   #   s3_origin_id = "S3OriginId"
-#   s3_origin_id = "kaelnomads.com.s3.us-east-1.amazonaws.com"
-# }
-
 resource "aws_cloudfront_distribution" "s3_website" {
   enabled         = true
   is_ipv6_enabled = true
@@ -27,13 +22,8 @@ resource "aws_cloudfront_distribution" "s3_website" {
   ]
 
   origin {
-    # domain_name = "kaelnomads.com.s3-website-us-east-1.amazonaws.com"
-    # origin_id   = local.s3_origin_id
-
     domain_name = aws_s3_bucket_website_configuration.s3_website["main"].website_endpoint
     origin_id   = aws_s3_bucket.website["main"].bucket_regional_domain_name
-
-
 
     connection_attempts = 3
     connection_timeout  = 10
@@ -78,8 +68,8 @@ resource "aws_cloudfront_distribution" "s3_website" {
 
   restrictions {
     geo_restriction {
-      #   restriction_type = "whitelist"
-      #   locations        = ["US", "CA", "GB", "DE"]
+      # restriction_type = "whitelist"
+      # locations        = ["US"]
       restriction_type = "none"
     }
   }
@@ -89,6 +79,10 @@ resource "aws_cloudfront_distribution" "s3_website" {
     cloudfront_default_certificate = false
     minimum_protocol_version       = "TLSv1.2_2021"
     ssl_support_method             = "sni-only"
+  }
+
+  tags = {
+    Environment = "production"
   }
 }
 
@@ -119,10 +113,6 @@ resource "aws_cloudfront_distribution" "dev" {
     }
   }
 
-  #   viewer_certificate {
-  #     cloudfront_default_certificate = true
-  #   }
-
   viewer_certificate {
     acm_certificate_arn            = aws_acm_certificate.main.arn
     cloudfront_default_certificate = false
@@ -132,8 +122,8 @@ resource "aws_cloudfront_distribution" "dev" {
 
   restrictions {
     geo_restriction {
-      restriction_type = "none"
-      locations        = []
+      restriction_type = "whitelist"
+      locations        = ["US"]
     }
   }
 
@@ -144,5 +134,9 @@ resource "aws_cloudfront_distribution" "dev" {
     allowed_methods        = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
     cached_methods         = ["GET", "HEAD"]
     target_origin_id       = aws_s3_bucket.website["dev"].bucket_regional_domain_name
+  }
+
+  tags = {
+    Environment = "dev"
   }
 }

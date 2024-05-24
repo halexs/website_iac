@@ -22,7 +22,7 @@ resource "aws_s3_bucket" "website" {
     Name = "${local.website_domain}-frontend-${each.value}"
   }
 
-  # force_destroy = true
+  force_destroy = true
 }
 
 resource "aws_s3_bucket_public_access_block" "main" {

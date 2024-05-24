@@ -32,3 +32,7 @@ variable "s3_website" {
 }
 
 
+variable "cloudfront_dev" {
+  type        = any
+  description = "AWS Cloudfront distribution managing TLS/SSL cert for s3 website. Used mainly for the buildspec environment variable to allow cache invalidation."
+}
