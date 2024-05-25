@@ -24,6 +24,12 @@ resource "aws_codebuild_project" "dev" {
       name  = "CLOUDFRONT_DEV_ID"
       value = var.cloudfront_dev.id
     }
+
+    environment_variable {
+      # Maybe use a dev delopment
+      name  = "API_GATEWAY_URL"
+      value = var.api_gw_url
+    }
   }
 
   source {
@@ -56,6 +62,11 @@ resource "aws_codebuild_project" "prod" {
     environment_variable {
       name  = "CLOUDFRONT_DEV_ID"
       value = var.cloudfront_dev.id
+    }
+
+    environment_variable {
+      name  = "API_GATEWAY_URL"
+      value = var.api_gw_url
     }
   }
 

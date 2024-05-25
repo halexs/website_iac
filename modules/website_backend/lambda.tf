@@ -22,6 +22,7 @@ resource "aws_iam_role" "lambda" {
   managed_policy_arns = [
     "arn:aws:iam::043038001148:policy/service-role/AWSLambdaBasicExecutionRole-2ace4102-d739-4121-ba89-cd104b087c66",
     "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess",
+    "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
   ]
   path = "/service-role/"
 }
@@ -42,34 +43,4 @@ resource "aws_lambda_function" "main" {
   source_code_hash = data.archive_file.lambda.output_base64sha256
 
   runtime = "python3.9"
-}
-
-# data "archive_file" "lambda" {
-#   type        = "zip"
-#   source_file = "${path.module}/test.js"
-#   output_path = "${path.module}/lambda_function_payload.zip"
-# }
-
-# resource "aws_lambda_function" "main" {
-#   function_name = "kaelnomads-getLocation_tf"
-#   filename      = "${path.module}/lambda_function_payload.zip"
-#   role          = aws_iam_role.lambda.arn
-#   handler       = "test.handler"
-#   # publish       = true
-
-#   source_code_hash = data.archive_file.lambda.output_base64sha256
-
-#   runtime = "nodejs20.x"
-# }
-
-resource "aws_lambda_permission" "api_gateway" {
-  statement_id  = "AllowAPIGatewayInvoke"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.main.function_name
-  principal     = "apigateway.amazonaws.com"
-
-  # The /*/* portion grants access from any method on any resource
-  # within the API Gateway "REST API".
-  source_arn = "${aws_api_gateway_rest_api.main.execution_arn}/*/*"
-  # source_arn = "${aws_api_gateway_rest_api.main.execution_arn}/*"
 }

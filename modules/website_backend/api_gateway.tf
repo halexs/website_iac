@@ -20,6 +20,19 @@ resource "aws_api_gateway_method" "proxy" {
   authorization = "NONE"
 }
 
+resource "aws_api_gateway_method_response" "proxy" {
+
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  resource_id = aws_api_gateway_resource.proxy.id
+  http_method = aws_api_gateway_method.proxy.http_method
+
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = true
+  }
+}
+
 resource "aws_api_gateway_integration" "lambda" {
   rest_api_id = aws_api_gateway_rest_api.main.id
   resource_id = aws_api_gateway_method.proxy.resource_id
@@ -48,7 +61,7 @@ resource "aws_api_gateway_integration" "lambda_root" {
 }
 
 resource "aws_api_gateway_deployment" "main" {
-  stage_name = "test"
+  stage_name = "api"
 
   rest_api_id = aws_api_gateway_rest_api.main.id
 
@@ -77,3 +90,14 @@ resource "aws_api_gateway_deployment" "main" {
 #       }
 #     }
 #   })
+
+resource "aws_lambda_permission" "api_gateway" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.main.function_name
+  principal     = "apigateway.amazonaws.com"
+
+  # The /*/* portion grants access from any method on any resource
+  # within the API Gateway "REST API".
+  source_arn = "${aws_api_gateway_rest_api.main.execution_arn}/*/*"
+}

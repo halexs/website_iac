@@ -2,6 +2,8 @@ import json
 import boto3
 
 def lambda_handler(event, context):
+    print("event: ", event)
+    print("context: ", context)
     # s3 = boto3.resource('s3')
     # content_object = s3.Object('kaelnomads-resources', 'locations.json')
     # file_content = content_object.get()['Body'].read().decode('utf-8')
