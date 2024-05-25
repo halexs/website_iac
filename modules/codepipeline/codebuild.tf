@@ -19,6 +19,17 @@ resource "aws_codebuild_project" "dev" {
       name  = "S3_BUCKET_NAME"
       value = var.s3_website["dev"].bucket
     }
+
+    environment_variable {
+      name  = "CLOUDFRONT_DEV_ID"
+      value = var.cloudfront_dev.id
+    }
+
+    environment_variable {
+      # Maybe use a dev delopment
+      name  = "API_GATEWAY_URL"
+      value = var.api_gw_url
+    }
   }
 
   source {
@@ -46,6 +57,16 @@ resource "aws_codebuild_project" "prod" {
     environment_variable {
       name  = "S3_BUCKET_NAME"
       value = var.s3_website["main"].bucket
+    }
+
+    environment_variable {
+      name  = "CLOUDFRONT_DEV_ID"
+      value = var.cloudfront_dev.id
+    }
+
+    environment_variable {
+      name  = "API_GATEWAY_URL"
+      value = var.api_gw_url
     }
   }
 

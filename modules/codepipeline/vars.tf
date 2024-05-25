@@ -31,4 +31,12 @@ variable "s3_website" {
   description = "AWS S3 bucket for the frontend website. Currently both the main and dev websites will be passed in as variables. Used to put the bucket names in environment variables for codebuild."
 }
 
+variable "cloudfront_dev" {
+  type        = any
+  description = "AWS Cloudfront distribution managing TLS/SSL cert for s3 website. Used mainly for the buildspec environment variable to allow cache invalidation."
+}
 
+variable "api_gw_url" {
+  type        = any
+  description = "API Gateway url to access the lambda function. Used for the CICD pipeline."
+}
