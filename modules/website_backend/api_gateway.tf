@@ -60,8 +60,14 @@ resource "aws_api_gateway_integration" "lambda_root" {
   uri                     = aws_lambda_function.main.invoke_arn
 }
 
+resource "random_string" "stage" {
+  # Add a random url string to the end of the stage to prevent random access
+  length  = 6
+  special = false
+}
+
 resource "aws_api_gateway_deployment" "main" {
-  stage_name = "api"
+  stage_name = "api-${random_string.stage.result}"
 
   rest_api_id = aws_api_gateway_rest_api.main.id
 
