@@ -39,4 +39,5 @@ variable "cloudfront_dev" {
 variable "api_gw_url" {
   type        = any
   description = "API Gateway url to access the lambda function. Used for the CICD pipeline."
+  default     = ""
 }
