@@ -45,6 +45,12 @@ terraform apply
 `mfa_aws.sh` also writes the credentials to `.env` (git-ignored). The MFA device ARN is hardcoded in
 the script; edit it if the device changes.
 
+## CI
+
+`.github/workflows/ci.yml` runs `terraform fmt -check` (non-blocking until the code base is formatted once) and `terraform validate` (root and `bootstrap/`, no backend) on every PR and push to `main`.
+A speculative `terraform plan` job runs on PRs only when the repo variable `AWS_ROLE_ARN` is set to a read-only IAM role that trusts GitHub OIDC.
+There is intentionally no automatic `apply`; apply manually with MFA credentials.
+
 ## Conventions
 
 - Run `terraform fmt -recursive` before committing.
