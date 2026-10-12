@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
+
+      - name: Format check
+        # Non-blocking until existing files are formatted once with `terraform fmt -recursive`; then remove this line.
+        continue-on-error: true
+        run: terraform fmt -check -recursive -diff
+
+      - name: Validate root module
+        run: |
+          terraform init -backend=false -input=false
+          terraform validate
+
+      - name: Validate bootstrap
+        working-directory: bootstrap
+        run: |
+          terraform init -backend=false -input=false
+          terraform validate
+
+  # Speculative plan against real AWS. Skipped until repo variable AWS_ROLE_ARN is set to an
+  # IAM role that trusts GitHub OIDC (token.actions.githubusercontent.com) for this repo.
+  # The role should be read-only (plan only); applies stay manual / via a human.
+  plan:
+    needs: validate
+    if: github.event_name == 'pull_request' && vars.AWS_ROLE_ARN != ''
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: us-east-1
+      - run: terraform init -input=false
+      - run: terraform plan -input=false -lock=false -no-color
