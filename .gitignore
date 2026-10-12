@@ -37,3 +37,12 @@ terraform.rc
 .env
 
 lambda_function_payload.zip
+
+# Local Terraform state (bootstrap uses a non-standard filename)
+*.state
+*.state.backup
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/
